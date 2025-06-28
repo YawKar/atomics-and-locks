@@ -27,6 +27,10 @@ name = "i32"
 version = "0.1.0"
 
 [[package]]
+name = "lazy_initialization"
+version = "0.1.0"
+
+[[package]]
 name = "mutex"
 version = "0.1.0"
 
