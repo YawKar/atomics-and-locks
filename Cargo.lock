@@ -11,7 +11,31 @@ name = "cell"
 version = "0.1.0"
 
 [[package]]
+name = "condvar"
+version = "0.1.0"
+
+[[package]]
+name = "holding_mutex"
+version = "0.1.0"
+
+[[package]]
+name = "i32"
+version = "0.1.0"
+
+[[package]]
 name = "mutex"
+version = "0.1.0"
+
+[[package]]
+name = "parking_threads"
+version = "0.1.0"
+
+[[package]]
+name = "phantom_data"
+version = "0.1.0"
+
+[[package]]
+name = "raw_ptrs"
 version = "0.1.0"
 
 [[package]]

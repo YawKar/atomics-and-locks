@@ -1,4 +1,4 @@
-use std::{sync::RwLock, thread, time::Duration};
+use std::{cell::Cell, sync::RwLock, thread, time::Duration};
 
 fn main() {
     let rwlock = RwLock::new(0);
@@ -30,4 +30,8 @@ fn main() {
         });
     });
     assert_eq!(*rwlock.read().unwrap(), 0);
+
+    let rwlock = RwLock::new(Cell::new(5));
+    rwlock.read().unwrap().set(10);
+    println!("{}", rwlock.read().unwrap().get());
 }
