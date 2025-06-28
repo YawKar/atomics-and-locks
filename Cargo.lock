@@ -7,6 +7,10 @@ name = "arc"
 version = "0.1.0"
 
 [[package]]
+name = "atomics"
+version = "0.1.0"
+
+[[package]]
 name = "cell"
 version = "0.1.0"
 
@@ -44,6 +48,10 @@ version = "0.1.0"
 
 [[package]]
 name = "reference_counter"
+version = "0.1.0"
+
+[[package]]
+name = "report_progress"
 version = "0.1.0"
 
 [[package]]

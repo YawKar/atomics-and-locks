@@ -9,6 +9,6 @@ members = [
   "chapter_1/rwlock",
   "chapter_1/scoped_threads",
   "chapter_1/static_fields",
-  "chapter_1/thread_id", "misc/holding_mutex",
+  "chapter_1/thread_id", "chapter_2/atomics", "chapter_2/report_progress", "misc/holding_mutex",
 ]
 resolver = "3"
