@@ -35,6 +35,10 @@ name = "mutex"
 version = "0.1.0"
 
 [[package]]
+name = "once"
+version = "0.1.0"
+
+[[package]]
 name = "parking_threads"
 version = "0.1.0"
 
