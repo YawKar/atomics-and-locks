@@ -1,0 +1,6 @@
+[package]
+name = "lock_data_by_cas_aquire_release"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
