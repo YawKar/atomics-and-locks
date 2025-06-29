@@ -1,0 +1,6 @@
+[package]
+name = "happens_before_spawn_join"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
