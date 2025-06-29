@@ -11,6 +11,10 @@ name = "atomics"
 version = "0.1.0"
 
 [[package]]
+name = "cas_id_allocation"
+version = "0.1.0"
+
+[[package]]
 name = "cell"
 version = "0.1.0"
 
@@ -40,6 +44,10 @@ version = "0.1.0"
 
 [[package]]
 name = "once_lock"
+version = "0.1.0"
+
+[[package]]
+name = "panicking_allocation_new_id"
 version = "0.1.0"
 
 [[package]]
