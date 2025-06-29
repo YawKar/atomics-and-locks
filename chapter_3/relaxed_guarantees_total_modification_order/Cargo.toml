@@ -1,0 +1,6 @@
+[package]
+name = "relaxed_guarantees_total_modification_order"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
