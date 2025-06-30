@@ -43,6 +43,14 @@ name = "condvar"
 version = "0.1.0"
 
 [[package]]
+name = "fences"
+version = "0.1.0"
+
+[[package]]
+name = "fences_opt"
+version = "0.1.0"
+
+[[package]]
 name = "getrandom"
 version = "0.3.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -199,6 +207,10 @@ version = "0.1.0"
 
 [[package]]
 name = "scoped_threads"
+version = "0.1.0"
+
+[[package]]
+name = "seqcst"
 version = "0.1.0"
 
 [[package]]
