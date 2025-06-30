@@ -218,6 +218,10 @@ name = "spin_lock"
 version = "0.1.0"
 
 [[package]]
+name = "spin_lock_train"
+version = "0.1.0"
+
+[[package]]
 name = "static_fields"
 version = "0.1.0"
 
