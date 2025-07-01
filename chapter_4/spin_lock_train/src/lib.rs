@@ -6,8 +6,8 @@ use std::{
 };
 
 pub struct SpinLock<T> {
-    locked: AtomicBool,
-    value: UnsafeCell<T>,
+    lock: AtomicBool,
+    cell: UnsafeCell<T>,
 }
 
 unsafe impl<T: Send> Sync for SpinLock<T> {}
@@ -17,13 +17,13 @@ unsafe impl<T: Send> Send for SpinLock<T> {}
 impl<T> SpinLock<T> {
     pub fn new(value: T) -> Self {
         Self {
-            locked: AtomicBool::new(false),
-            value: UnsafeCell::new(value),
+            lock: AtomicBool::new(false),
+            cell: UnsafeCell::new(value),
         }
     }
 
     pub fn lock(&self) -> SpinLockGuard<'_, T> {
-        while self.locked.swap(true, Ordering::Acquire) {
+        while self.lock.swap(true, Ordering::Acquire) {
             std::hint::spin_loop();
         }
         SpinLockGuard {
@@ -33,7 +33,7 @@ impl<T> SpinLock<T> {
     }
 
     fn unlock(&self) {
-        self.locked.store(false, Ordering::Release);
+        self.lock.store(false, Ordering::Release);
     }
 }
 
@@ -46,21 +46,24 @@ unsafe impl<T: Sync> Sync for SpinLockGuard<'_, T> {}
 
 unsafe impl<T: Send> Send for SpinLockGuard<'_, T> {}
 
+impl<T> Drop for SpinLockGuard<'_, T> {
+    fn drop(&mut self) {
+        self.lock.unlock();
+    }
+}
+
 impl<T> Deref for SpinLockGuard<'_, T> {
     type Target = T;
+
     fn deref(&self) -> &Self::Target {
-        unsafe { &*self.lock.value.get() }
+        // Safety: existence of this SpinLockGuard represents an exclusive access to cell.
+        unsafe { &*self.lock.cell.get() }
     }
 }
 
 impl<T> DerefMut for SpinLockGuard<'_, T> {
     fn deref_mut(&mut self) -> &mut Self::Target {
-        unsafe { &mut *self.lock.value.get() }
-    }
-}
-
-impl<T> Drop for SpinLockGuard<'_, T> {
-    fn drop(&mut self) {
-        self.lock.unlock();
+        // Safety: existence of this SpinLockGuard represents an exclusive access to cell.
+        unsafe { &mut *self.lock.cell.get() }
     }
 }
