@@ -1,0 +1,6 @@
+[package]
+name = "basic_one_shot_channel"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
