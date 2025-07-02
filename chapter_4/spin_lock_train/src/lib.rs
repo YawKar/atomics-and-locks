@@ -42,28 +42,22 @@ pub struct SpinLockGuard<'a, T> {
     value: PhantomData<&'a mut T>,
 }
 
-unsafe impl<T: Sync> Sync for SpinLockGuard<'_, T> {}
-
-unsafe impl<T: Send> Send for SpinLockGuard<'_, T> {}
-
-impl<T> Drop for SpinLockGuard<'_, T> {
-    fn drop(&mut self) {
-        self.lock.unlock();
-    }
-}
-
 impl<T> Deref for SpinLockGuard<'_, T> {
     type Target = T;
 
     fn deref(&self) -> &Self::Target {
-        // Safety: existence of this SpinLockGuard represents an exclusive access to cell.
         unsafe { &*self.lock.cell.get() }
     }
 }
 
 impl<T> DerefMut for SpinLockGuard<'_, T> {
     fn deref_mut(&mut self) -> &mut Self::Target {
-        // Safety: existence of this SpinLockGuard represents an exclusive access to cell.
         unsafe { &mut *self.lock.cell.get() }
+    }
+}
+
+impl<T> Drop for SpinLockGuard<'_, T> {
+    fn drop(&mut self) {
+        self.lock.unlock();
     }
 }
