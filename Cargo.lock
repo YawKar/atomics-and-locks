@@ -124,6 +124,10 @@ name = "once_lock"
 version = "0.1.0"
 
 [[package]]
+name = "one_shot_channel_with_states_training"
+version = "0.1.0"
+
+[[package]]
 name = "panicking_allocation_new_id"
 version = "0.1.0"
 
