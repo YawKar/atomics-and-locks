@@ -23,6 +23,10 @@ name = "basic_channel"
 version = "0.1.0"
 
 [[package]]
+name = "basic_channel_train"
+version = "0.1.0"
+
+[[package]]
 name = "basic_one_shot_channel"
 version = "0.1.0"
 
