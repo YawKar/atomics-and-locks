@@ -10,6 +10,6 @@ members = [
   "chapter_1/scoped_threads",
   "chapter_1/static_fields",
   "chapter_1/thread_id", "chapter_2/atomics", "chapter_2/cas_id_allocation", "chapter_2/lazy_initialization", "chapter_2/lazy_key_init", "chapter_2/once", "chapter_2/once_lock", "chapter_2/panicking_allocation_new_id", "chapter_2/report_progress", "chapter_3/aquire_release_make_happens_before_relationship", "chapter_3/atomicptr", "chapter_3/fences", "chapter_3/fences_opt", "chapter_3/happens_before_spawn_join", "chapter_3/lock_data_by_cas_aquire_release", "chapter_3/relaxed_guarantees_total_modification_order", "chapter_3/seqcst", "chapter_4/spin_lock", "misc/holding_mutex", "misc/while_let_range",
-  "chapter_4/spin_lock_train", "chapter_5/basic_channel", "chapter_5/basic_one_shot_channel", "chapter_5/channel_with_atomic_states", "chapter_5/basic_channel_train", "chapter_5/one_shot_channel_with_states_training",
+  "chapter_4/spin_lock_train", "chapter_5/basic_channel", "chapter_5/basic_one_shot_channel", "chapter_5/channel_with_atomic_states", "chapter_5/basic_channel_train", "chapter_5/one_shot_channel_with_states_training", "chapter_5/receiver_sender",
 ]
 resolver = "3"
