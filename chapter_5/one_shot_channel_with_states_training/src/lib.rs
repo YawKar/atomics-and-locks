@@ -12,14 +12,18 @@ const READING: u8 = 3;
 
 pub struct Channel<T> {
     state: AtomicU8,
-    value: UnsafeCell<MaybeUninit<T>>,
+    cell: UnsafeCell<MaybeUninit<T>>,
 }
+
+unsafe impl<T: Send> Sync for Channel<T> {}
+
+unsafe impl<T: Send> Send for Channel<T> {}
 
 impl<T> Channel<T> {
     pub fn new() -> Self {
         Self {
             state: AtomicU8::new(EMPTY),
-            value: UnsafeCell::new(MaybeUninit::uninit()),
+            cell: UnsafeCell::new(MaybeUninit::uninit()),
         }
     }
 
@@ -29,9 +33,9 @@ impl<T> Channel<T> {
             .compare_exchange(EMPTY, WRITING, Ordering::Relaxed, Ordering::Relaxed)
             .is_err()
         {
-            return Err("one shot channel is capable only of 1 message to be sent".into());
+            return Err("no more than 1 sent message".into());
         }
-        (unsafe { &mut *self.value.get() }).write(value);
+        unsafe { &mut *self.cell.get() }.write(value);
         self.state.store(READY, Ordering::Release);
         Ok(())
     }
@@ -46,10 +50,8 @@ impl<T> Channel<T> {
             .compare_exchange(READY, READING, Ordering::Acquire, Ordering::Relaxed)
             .is_err()
         {
-            panic!("no message to receive!");
+            return Err("no more than 1 message".into());
         }
-        Ok(unsafe { (&mut *self.value.get()).assume_init_read() })
+        Ok(unsafe { (*self.cell.get()).assume_init_read() })
     }
 }
-
-unsafe impl<T: Send> Sync for Channel<T> {}
