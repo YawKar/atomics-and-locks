@@ -22,7 +22,7 @@ impl<T> SpinLock<T> {
         }
     }
 
-    pub fn lock(&self) -> SpinLockGuard<'_, T> {
+    pub fn lock(&self) -> SpinLockGuard<T> {
         while self.lock.swap(true, Ordering::Acquire) {
             std::hint::spin_loop();
         }
@@ -42,6 +42,12 @@ pub struct SpinLockGuard<'a, T> {
     value: PhantomData<&'a mut T>,
 }
 
+impl<T> Drop for SpinLockGuard<'_, T> {
+    fn drop(&mut self) {
+        self.lock.unlock();
+    }
+}
+
 impl<T> Deref for SpinLockGuard<'_, T> {
     type Target = T;
 
@@ -53,11 +59,5 @@ impl<T> Deref for SpinLockGuard<'_, T> {
 impl<T> DerefMut for SpinLockGuard<'_, T> {
     fn deref_mut(&mut self) -> &mut Self::Target {
         unsafe { &mut *self.lock.cell.get() }
-    }
-}
-
-impl<T> Drop for SpinLockGuard<'_, T> {
-    fn drop(&mut self) {
-        self.lock.unlock();
     }
 }
