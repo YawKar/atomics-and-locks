@@ -375,6 +375,7 @@ name = "mmutex-2-training"
 version = "0.1.0"
 dependencies = [
  "atomic-wait",
+ "criterion",
 ]
 
 [[package]]
