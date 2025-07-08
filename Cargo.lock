@@ -371,6 +371,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "mmutex-2-training"
+version = "0.1.0"
+dependencies = [
+ "atomic-wait",
+]
+
+[[package]]
 name = "mutex"
 version = "0.1.0"
 
