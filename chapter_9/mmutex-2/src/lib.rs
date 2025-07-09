@@ -82,7 +82,7 @@ impl<T> MMutex2<T> {
 }
 
 pub struct MMutex2Guard<'a, T> {
-    lock: &'a MMutex2<T>,
+    pub lock: &'a MMutex2<T>,
     value: PhantomData<&'a mut T>,
 }
 
