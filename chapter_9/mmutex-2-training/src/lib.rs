@@ -7,8 +7,12 @@ use std::{
 
 use atomic_wait::{wait, wake_one};
 
+// Unlocked.
 const STATE_FREE: u32 = 0;
+// Locked by 1 thread.
 const STATE_LOCKED: u32 = 1;
+// There are threads that are blocked while waiting for the lock.
+// They need to be waken up.
 const STATE_WAITED: u32 = 2;
 
 pub struct MMutex2<T> {
@@ -30,6 +34,7 @@ impl<T> MMutex2<T> {
 
     #[inline]
     pub fn lock(&self) -> MMutex2Guard<T> {
+        // Fast case.
         if self
             .state
             .compare_exchange(
@@ -40,27 +45,24 @@ impl<T> MMutex2<T> {
             )
             .is_err()
         {
-            self.lock_contention();
+            // Slow case.
+            self.lock_with_contention();
         }
-
         MMutex2Guard {
-            m: self,
+            lock: &self,
             _value: PhantomData,
         }
     }
 
-    // Either STATE_LOCK or STATE_WAITED
     #[cold]
-    fn lock_contention(&self) {
+    fn lock_with_contention(&self) {
         let mut spin = 0;
-
-        // What if we can spin for a little and quickly acquire the lock
         while self.state.load(Ordering::Relaxed) == STATE_LOCKED && spin < 100 {
             spin += 1;
             std::hint::spin_loop();
         }
 
-        // Last try
+        // Second chance.
         if self
             .state
             .compare_exchange(
@@ -74,7 +76,7 @@ impl<T> MMutex2<T> {
             return;
         }
 
-        // Then we go sleep
+        // Go to sleep.
         while self.state.swap(2, Ordering::Acquire) != 0 {
             wait(&self.state, 2);
         }
@@ -83,19 +85,20 @@ impl<T> MMutex2<T> {
     #[inline]
     fn unlock(&self) {
         if self.state.swap(STATE_FREE, Ordering::Release) == STATE_WAITED {
+            // Need to awake a thread.
             wake_one(&self.state);
         }
     }
 }
 
 pub struct MMutex2Guard<'a, T> {
-    m: &'a MMutex2<T>,
+    lock: &'a MMutex2<T>,
     _value: PhantomData<&'a mut T>,
 }
 
 impl<T> Drop for MMutex2Guard<'_, T> {
     fn drop(&mut self) {
-        self.m.unlock();
+        self.lock.unlock();
     }
 }
 
@@ -103,12 +106,12 @@ impl<T> Deref for MMutex2Guard<'_, T> {
     type Target = T;
 
     fn deref(&self) -> &Self::Target {
-        unsafe { &*self.m.cell.get() }
+        unsafe { &*self.lock.cell.get() }
     }
 }
 
 impl<T> DerefMut for MMutex2Guard<'_, T> {
     fn deref_mut(&mut self) -> &mut Self::Target {
-        unsafe { &mut *self.m.cell.get() }
+        unsafe { &mut *self.lock.cell.get() }
     }
 }
