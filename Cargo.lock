@@ -175,6 +175,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "condition-variable-training"
+version = "0.1.0"
+dependencies = [
+ "atomic-wait",
+ "mmutex-2",
+]
+
+[[package]]
 name = "condvar"
 version = "0.1.0"
 

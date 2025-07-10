@@ -1,0 +1,8 @@
+[package]
+name = "condition-variable-training"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+atomic-wait = "1.1.0"
+mmutex-2 = { version = "0.1.0", path = "../mmutex-2" }
