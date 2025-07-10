@@ -7,12 +7,8 @@ use std::{
 
 use atomic_wait::{wait, wake_one};
 
-// Unlocked.
 const STATE_FREE: u32 = 0;
-// Locked by 1 thread.
 const STATE_LOCKED: u32 = 1;
-// There are threads that are blocked while waiting for the lock.
-// They need to be waken up.
 const STATE_WAITED: u32 = 2;
 
 pub struct MMutex2<T> {
@@ -21,7 +17,6 @@ pub struct MMutex2<T> {
 }
 
 unsafe impl<T: Send> Sync for MMutex2<T> {}
-
 unsafe impl<T: Send> Send for MMutex2<T> {}
 
 impl<T> MMutex2<T> {
@@ -32,7 +27,6 @@ impl<T> MMutex2<T> {
         }
     }
 
-    #[inline]
     pub fn lock(&self) -> MMutex2Guard<T> {
         // Fast case.
         if self
@@ -46,7 +40,7 @@ impl<T> MMutex2<T> {
             .is_err()
         {
             // Slow case.
-            self.lock_with_contention();
+            self.lock_contented();
         }
         MMutex2Guard {
             lock: &self,
@@ -54,15 +48,15 @@ impl<T> MMutex2<T> {
         }
     }
 
-    #[cold]
-    fn lock_with_contention(&self) {
+    fn lock_contented(&self) {
         let mut spin = 0;
-        while self.state.load(Ordering::Relaxed) == STATE_LOCKED && spin < 100 {
+        // Small spin just to try to lock it.
+        while self.state.load(Ordering::Relaxed) == 1 && spin < 100 {
             spin += 1;
             std::hint::spin_loop();
         }
 
-        // Second chance.
+        // Last chance.
         if self
             .state
             .compare_exchange(
@@ -76,16 +70,13 @@ impl<T> MMutex2<T> {
             return;
         }
 
-        // Go to sleep.
-        while self.state.swap(2, Ordering::Acquire) != 0 {
-            wait(&self.state, 2);
+        while self.state.swap(STATE_WAITED, Ordering::Acquire) != STATE_FREE {
+            wait(&self.state, STATE_WAITED);
         }
     }
 
-    #[inline]
     fn unlock(&self) {
         if self.state.swap(STATE_FREE, Ordering::Release) == STATE_WAITED {
-            // Need to awake a thread.
             wake_one(&self.state);
         }
     }
