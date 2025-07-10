@@ -19,6 +19,8 @@ fn criterion_benchmark(c: &mut Criterion) {
                     }
                 });
             });
+            assert_eq!(*m.lock(), 1_000_000);
+            *m.lock() = 0;
         })
     });
 }
