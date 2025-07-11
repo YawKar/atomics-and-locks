@@ -26,9 +26,10 @@ impl<T> SpinLock<T> {
         while self.lock.swap(true, Ordering::Acquire) {
             std::hint::spin_loop();
         }
+
         SpinLockGuard {
-            lock: self,
-            value: PhantomData,
+            lock: &self,
+            _value: PhantomData,
         }
     }
 
@@ -39,7 +40,7 @@ impl<T> SpinLock<T> {
 
 pub struct SpinLockGuard<'a, T> {
     lock: &'a SpinLock<T>,
-    value: PhantomData<&'a mut T>,
+    _value: PhantomData<&'a mut T>,
 }
 
 impl<T> Drop for SpinLockGuard<'_, T> {
