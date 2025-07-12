@@ -79,6 +79,14 @@ name = "basic_reference_counting"
 version = "0.1.0"
 
 [[package]]
+name = "better-condvar"
+version = "0.1.0"
+dependencies = [
+ "atomic-wait",
+ "mmutex-2",
+]
+
+[[package]]
 name = "bitflags"
 version = "2.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
