@@ -566,6 +566,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "reader-writer-lock"
+version = "0.1.0"
+dependencies = [
+ "atomic-wait",
+]
+
+[[package]]
 name = "receiver_sender"
 version = "0.1.0"
 
